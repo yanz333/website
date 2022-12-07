@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "Analysis.html",
+    "href": "Analysis.html",
+    "title": "Fingerprinting Project",
+    "section": "",
+    "text": "Research Question\nWe wanted to fingerprint or identify the individuals based on their raw accelerometry data.\n\n\nExploratory Analysis\n\n\n\n\n\nWe first made plots to visualize the demographics of the 32 participants. There are 13 men and 19 women, and around 75% of them are white. Additionally, 31 out of 32 subjects are right-handed, and one individual identified herself as ambidextrous.\n\n\n\n\n\nRaw accelerometry walking data collected from left wrist for the selected subject is plotted over a 10s time interval. We took the vector magnitude of the amplitudes from 3 axes.\n\n\nMethods\n\n\n\nWe first translated the signals for all subjects over a small time interval (such as 0.25s as shown) so that we have pairs of the original (u) and time-lagged (s) signals starting from 0.25s. The animated figure above shows the first pair of u and s signals as the red dots. We obtained all the possible pairs and investigated their densities (autoregressive distributions) at each s-u interval for every individual. Please see a more in-depth visualization in the R-shiny app. We then fitted functional and logistic regressions to identify the subjects.\n\n\nResults\nTo the best of our knowledge, this is the first time that accelerometry fingerprinting has been implemented with the 100% success rate. We believe that our model is able to capture the unique walking patterns for each study participant, which may find applications in forensics, health monitoring and recovery management."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "ScM in Biostatistics (2023) | Johns Hopkins Bloomberg School of Public Health | Baltimore, MD\nBS in Chemical Engineering (2016) | Case Western Reserve University | Cleveland, OH"
+  },
+  {
+    "objectID": "about.html#projects",
+    "href": "about.html#projects",
+    "title": "About Me",
+    "section": "Projects",
+    "text": "Projects\nFingerprinting individuals based on their accelerometry data using functional and logistic regression. | Dec 2021 - present\nPredicting sleep disorders for study participants based on 11 selected variables using random forest. | Aug 2021 - Oct 2021"
+  },
+  {
+    "objectID": "about.html#coursework",
+    "href": "about.html#coursework",
+    "title": "About Me",
+    "section": "Coursework",
+    "text": "Coursework\nCalculus | Differential Equations | Linear Algebra\nMethods in Biostatistics | Essentials of Probability | Statistical Machine learning\nData Management - SQL | Statistical Computing - R | SAS Statistical Package | Advanced Data Science – Python"
+  },
+  {
+    "objectID": "about.html#hobbies-interests",
+    "href": "about.html#hobbies-interests",
+    "title": "About Me",
+    "section": "Hobbies & Interests",
+    "text": "Hobbies & Interests\nI enjoy reading, painting and cooking outside of my academic and professional life. I also love hiking and international traveling!"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Yan Zhang",
+    "section": "",
+    "text": "Hello! I am a master’s student in Department of Biostatistics at Johns Hopkins University graduating in June, 2023. I find analysis of Wearable and Implantable Technology (WIT) data exciting and am actively conducting research in this field."
+  }
+]

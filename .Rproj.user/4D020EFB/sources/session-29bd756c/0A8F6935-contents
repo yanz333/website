@@ -1,0 +1,24 @@
+project:
+  type: website
+
+website:
+  title: "Yan Zhang"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+      - href: Analysis.qmd
+        text: Data Project
+
+format:
+  html:
+    theme: minty
+    css: styles.css
+    toc: true
+
+editor: visual
+
+execute: 
+  freeze: auto

@@ -1,0 +1,167 @@
+---
+title: "Fingerprinting Project"
+editor: visual
+---
+
+### Dataset
+
+The dataset contains raw accelerometry data collected at 100 Hz for 32 healthy subjects during 4 different physical activities. It is freely available on [PhysioNet](https://doi.org/10.13026/51h0-a262).
+
+### Research Question
+
+We wanted to fingerprint or identify the individuals based on their raw accelerometry data.
+
+### Exploratory Analysis
+
+```{r, fig.width = 8, fig.height=3}
+#| echo: false
+#| eval: true
+#| warning: false
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(ggpubr)
+
+demo <- read.csv("/Users/yanzhang/Desktop/WIT/Data/participant_demog.csv")
+
+gender <- ggplot(demo, aes(x=gender, fill=gender)) +
+  geom_bar(width=0.6) +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5),
+        legend.position = "none") +
+  labs(x = NULL,
+       y = "Count",
+       title = "Gender") + 
+  scale_fill_brewer(palette="Blues")
+
+race <- ggplot(demo, aes(x=race, fill=race)) +
+  geom_bar(width=0.6) +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5),
+        legend.position = "none") +
+  labs(x = NULL,
+       y = "Count",
+       title = "Race") + 
+  scale_fill_brewer(palette="Blues")
+
+right <- demo %>%
+  mutate(right=case_when(right_handed== 1 ~ "Right Handed",
+                         right_handed!= 1 ~ "Not Right Handed")) %>%
+  ggplot(aes(x=right, fill=right)) +
+  geom_bar(width=0.6) +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5),
+        legend.position = "none") +
+  labs(x = NULL,
+       y = "Count",
+       title = "Right Handedness") + 
+  scale_fill_brewer(palette="Blues")
+
+figure1 <- ggarrange(gender, race, right,
+          ncol = 3, nrow = 1)
+
+annotate_figure(figure1, 
+                bottom = text_grob("Figure 1: A histogram of categorical demographics for the 32 subjects.", 
+                             hjust = 1, x = 1, face = "bold", 
+                             size = 10))
+```
+
+We first made plots to visualize the demographics of the 32 participants. There are 13 men and 19 women, and around 75% of them are white. Additionally, 31 out of 32 subjects are right-handed, and one individual identified herself as ambidextrous.
+
+```{r, fig.width = 8, fig.height=4}
+#| echo: false
+#| eval: true
+#| warning: false
+#| include: false
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(ggpubr)
+
+age <- ggplot(demo, aes(x=age, color=gender)) +
+  geom_density() +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5)) +
+  labs(x = "Age (years)",
+       y = "Count",
+       title = "Age") 
+
+height <- ggplot(demo, aes(x=height_in, color=gender)) +
+  geom_density() +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5)) +
+  labs(x = "Height (inches)",
+       y = "Count",
+       title = "Height") 
+
+weight <- ggplot(demo, aes(x=weight_lbs, color=gender)) +
+  geom_density() +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5)) +
+  labs(x = "Weight (lbs)",
+       y = "Count",
+       title = "Weight") 
+
+figure2 <- ggarrange(age, height, weight, align = "hv",
+          ncol = 3, nrow = 1, common.legend = TRUE)
+
+annotate_figure(figure2, 
+                bottom = text_grob("Figure 2: Densities of continuous demographics for the 32 subjects.", 
+                             hjust = 1, x = 1, face = "bold", 
+                             size = 10))
+#Continuous demographic features for the 32 subjects are plotted and colored by gender. Females tend to weigh less and are shorter than males.
+```
+
+```{r, fig.width = 8, fig.height=4}
+#| echo: false
+#| eval: true
+#| warning: false
+library(caret)
+
+id <- 21
+df_fit <- read_rds(file.path("/Users/yanzhang/Desktop/WIT/Data/raw_accel_data_deocs.rds"))
+demog <- data.frame(cbind(df_fit$id, df_fit$subj_id)) %>% distinct()
+names(demog) <- c("subject_id", "real_id")
+filename <- paste("/Users/yanzhang/Desktop/WIT/Data/raw_data/", (demog[id, ])$real_id, ".csv", sep="")
+
+sub21 <- (read.csv(filename))[,1:5] %>% filter(activity==1) %>%
+  mutate(vector_magnitude = sqrt(lw_x^2+lw_y^2+lw_z^2))
+
+raw <- sub21 %>%
+  filter(time_s<=651 & time_s>=641) %>%
+  gather(key = Axis, value = Amplitude, 
+         c("lw_x", "lw_y", "lw_z")) %>%
+  ggplot(aes(x=time_s, y = Amplitude, group = Axis, colour = Axis)) + 
+  geom_line(size=0.3) +
+  facet_grid(Axis~., scales = "free_y") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5)) +
+  theme(legend.position = "none")
+
+vm <- sub21 %>% 
+  filter(time_s<=651 & time_s>=641) %>%
+  ggplot(aes(x=time_s, y = vector_magnitude)) + 
+  geom_line(size=0.3) +
+  theme_classic() +
+  theme(plot.title = element_text(hjust=0.5)) +
+  theme(legend.position = "none")
+
+figure3 <- ggarrange(raw, vm + rremove("ylab"), align = "hv")
+
+annotate_figure(figure3, 
+                bottom = text_grob("Figure 3: Raw and processed accelerometry walking data for subject 21.", 
+                             hjust = 1, x = 1, face = "bold", 
+                             size = 10))
+```
+
+Raw accelerometry walking data collected from left wrist for the selected subject is plotted over a 10s time interval. We took the vector magnitude of the amplitudes from 3 axes.
+
+### Methods
+
+<center>![](outfile.gif){width="65%"}</center>
+
+We first translated the signals for all subjects over a small time interval (such as 0.25s as shown) so that we have pairs of the original (u) and time-lagged (s) signals starting from 0.25s. The animated figure above shows the first pair of u and s signals as the red dots. We obtained all the possible pairs and investigated their densities (autoregressive distributions) at each s-u interval for every individual. Please see a more in-depth visualization in the [R-shiny app](https://yanzhang3.shinyapps.io/denPub/). We then fitted functional and logistic regressions to identify the subjects.
+
+### Results
+
+To the best of our knowledge, this is the first time that accelerometry fingerprinting has been implemented with the 100% success rate. We believe that our model is able to capture the unique walking patterns for each study participant, which may find applications in forensics, health monitoring and recovery management.
